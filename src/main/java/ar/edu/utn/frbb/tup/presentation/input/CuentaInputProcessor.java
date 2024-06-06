@@ -7,6 +7,7 @@ import ar.edu.utn.frbb.tup.model.TipoMoneda;
 import ar.edu.utn.frbb.tup.model.exception.ClienteAlreadyExistsException;
 import ar.edu.utn.frbb.tup.model.exception.CuentaAlreadyExistsException;
 import ar.edu.utn.frbb.tup.model.exception.TipoCuentaAlreadyExistsException;
+import ar.edu.utn.frbb.tup.model.exception.TipoDeCuentaNoSoportadaException;
 import ar.edu.utn.frbb.tup.persistence.CuentaDao;
 import ar.edu.utn.frbb.tup.service.ClienteService;
 import ar.edu.utn.frbb.tup.service.CuentaService;
@@ -68,7 +69,10 @@ public class CuentaInputProcessor extends BaseInputProcessor{
             throw new RuntimeException(e);
         } catch (Exception e) {
             System.out.println("Error al dar de alta la cuenta: " + e.getMessage());
-        } finally {
+        }catch (TipoDeCuentaNoSoportadaException e){
+            System.out.println("Error: " + e.getMessage());
+        }
+         finally {
             clearScreen();
         }
     }
