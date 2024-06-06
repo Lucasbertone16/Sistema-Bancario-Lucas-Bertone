@@ -125,7 +125,99 @@ public class ClienteServiceTest {
 
     }
 
-    //Agregar una CA$ y CC$ --> success 2 cuentas, titular peperino
-    //Agregar una CA$ y CAU$S --> success 2 cuentas, titular peperino...
-    //Testear clienteService.buscarPorDni
+       //Agregar una CA$ y CC$ --> success 2 cuentas, titular peperino
+     @Test
+    public void testClienteDosCuentasEnPesos() throws TipoCuentaAlreadyExistsException{
+           Cliente pepeRino = new Cliente();
+           pepeRino.setDni(46339672);
+           pepeRino.setNombre("Pepe");
+           pepeRino.setApellido("Rino");
+           pepeRino.setFechaNacimiento(LocalDate.of(2005, 3, 2));
+           pepeRino.setTipoPersona(TipoPersona.PERSONA_FISICA);
+   
+           Cuenta cuenta = new Cuenta()
+                   .setMoneda(TipoMoneda.PESOS)
+                   .setBalance(500000)
+                   .setTipoCuenta(TipoCuenta.CAJA_AHORRO);
+           
+                   
+           Cuenta cuenta2 = new Cuenta()
+                   .setMoneda(TipoMoneda.PESOS)
+                   .setBalance(500000)
+                   .setTipoCuenta(TipoCuenta.CUENTA_CORRIENTE);
+                   
+           when(clienteDao.find(46339672, true)).thenReturn(pepeRino);
+          
+           //agregamos la cuenta que es caja de ahorro y la que es cta corriente
+           clienteService.agregarCuenta(cuenta, pepeRino.getDni());
+           clienteService.agregarCuenta(cuenta2, pepeRino.getDni());
+   
+           //nos fijamos que el cliente tiene 2 cuentas
+           verify(clienteDao, times(2)).save(pepeRino);
+           assertEquals(2, pepeRino.getCuentas().size());
+   
+           assertEquals(pepeRino, cuenta.getTitular());
+           assertEquals(pepeRino, cuenta2.getTitular());
+    }
+   
+       //Agregar una CA$ y CAU$S --> success 2 cuentas, titular peperino...
+    @Test
+    public void testCajaAhorroPesoYDolares() throws TipoCuentaAlreadyExistsException{
+           Cliente pepeRino=new Cliente();
+           pepeRino.setDni(46339672);
+           pepeRino.setNombre("Pepe");
+           pepeRino.setApellido("Rino");
+           pepeRino.setFechaNacimiento(LocalDate.of(2005, 3, 2));
+           pepeRino.setTipoPersona(TipoPersona.PERSONA_FISICA);
+   
+           Cuenta cuentaPesos= new Cuenta()
+                   .setMoneda(TipoMoneda.PESOS)
+                   .setBalance(1500000)
+                   .setTipoCuenta(TipoCuenta.CAJA_AHORRO);
+           
+           Cuenta cuentaDolares= new Cuenta()
+                   .setMoneda(TipoMoneda.DOLARES)
+                   .setBalance(1500)
+                   .setTipoCuenta(TipoCuenta.CAJA_AHORRO);
+   
+           when(clienteDao.find(46339672, true)).thenReturn(pepeRino);
+   
+           clienteService.agregarCuenta(cuentaPesos, pepeRino.getDni());
+           clienteService.agregarCuenta(cuentaDolares, pepeRino.getDni());
+   
+           assertEquals(2, pepeRino.getCuentas().size());
+   
+           assertEquals(pepeRino, cuentaDolares.getTitular());
+           assertEquals(pepeRino, cuentaPesos.getTitular());
+    }
+   
+       //Testear clienteService.buscarPorDni
+   
+    @Test
+    public void testClienteServiceBuscarPorDniExito() throws ClienteAlreadyExistsException {
+           Cliente pepeRino = new Cliente();
+           pepeRino.setDni(46339672);
+           pepeRino.setNombre("Pepe");
+           pepeRino.setApellido("Rino");
+           pepeRino.setFechaNacimiento(LocalDate.of(2005, 3, 2));
+           pepeRino.setTipoPersona(TipoPersona.PERSONA_FISICA);
+   
+           when(clienteDao.find(46339672, true)).thenReturn(pepeRino);
+   
+           Cliente resultadoBuscarDNI = clienteService.buscarClientePorDni(46339672);
+   
+           assertNotNull(resultadoBuscarDNI); // Verificamos que el resultadoBuscarDNI no sea null
+           assertEquals(pepeRino.getDni(), resultadoBuscarDNI.getDni()); //verificar que el DNI del cliente devuelto coincide con el DNI del cliente configurado
+   
+           verify(clienteDao, times(1)).find(46339672, true);
+       }
+   
+       //Testear clienteService.buscarPorDni
+       @Test
+       public void testClienteServiceBuscarPorDniFallo() throws ClienteAlreadyExistsException{
+           Cliente resultadoBuscarDNI = clienteService.buscarClientePorDni(34554354);
+           assertNull(resultadoBuscarDNI); //Verifica que el resultado de la búsqueda sea null osea que no se encontró ningún cliente con el DNI especificado.
+           verify(clienteDao, times(1)).find(34554354, true);
+    }
+   
 }
