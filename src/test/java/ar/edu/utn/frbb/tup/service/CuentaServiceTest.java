@@ -85,7 +85,7 @@ public class CuentaServiceTest {
 
         when(cuentaDao.find(cuenta.getNumeroCuenta())).thenReturn(null);
 
-        cuentaService.darDeAltaCuenta(cuenta, dniTitular);
+        clienteService.agregarCuenta(cuenta, dniTitular);
 
         Cuenta cuenta2 = new Cuenta()
                 .setMoneda(TipoMoneda.PESOS)
@@ -94,7 +94,7 @@ public class CuentaServiceTest {
         cuenta2.setNumeroCuenta(321);
 
         
-        assertThrows(TipoCuentaAlreadyExistsException.class, () -> cuentaService.darDeAltaCuenta(cuenta2, dniTitular));
+        assertThrows(TipoCuentaAlreadyExistsException.class, () -> clienteService.agregarCuenta(cuenta2, dniTitular));
 
         verify(cuentaDao, never()).save(cuenta2);
    }

@@ -91,7 +91,6 @@ public class ClienteServiceTest {
 
         assertEquals(1, pepeRino.getCuentas().size());
         assertEquals(pepeRino, cuenta.getTitular());
-
     }
 
 
@@ -159,7 +158,6 @@ public class ClienteServiceTest {
            assertEquals(pepeRino, cuenta.getTitular());
            assertEquals(pepeRino, cuenta2.getTitular());
     }
-   
        //Agregar una CA$ y CAU$S --> success 2 cuentas, titular peperino...
     @Test
     public void testCajaAhorroPesoYDolares() throws TipoCuentaAlreadyExistsException{
