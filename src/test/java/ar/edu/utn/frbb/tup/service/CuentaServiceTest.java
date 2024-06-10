@@ -93,12 +93,9 @@ public class CuentaServiceTest {
                 .setTipoCuenta(TipoCuenta.CAJA_AHORRO);
         cuenta2.setNumeroCuenta(321);
 
-        //PREGUNTAR
-        doThrow(TipoCuentaAlreadyExistsException.class).when(clienteService).agregarCuenta(cuenta2, dniTitular);
+        
         assertThrows(TipoCuentaAlreadyExistsException.class, () -> cuentaService.darDeAltaCuenta(cuenta2, dniTitular));
 
         verify(cuentaDao, never()).save(cuenta2);
-
-        
    }
 }

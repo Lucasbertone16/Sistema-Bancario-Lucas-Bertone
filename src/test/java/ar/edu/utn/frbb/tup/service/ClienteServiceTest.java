@@ -219,5 +219,4 @@ public class ClienteServiceTest {
            assertNull(resultadoBuscarDNI); //Verifica que el resultado de la búsqueda sea null osea que no se encontró ningún cliente con el DNI especificado.
            verify(clienteDao, times(1)).find(34554354, true);
     }
-   
 }
