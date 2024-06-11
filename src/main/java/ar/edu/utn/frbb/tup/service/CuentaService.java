@@ -1,6 +1,7 @@
 package ar.edu.utn.frbb.tup.service;
 
 import ar.edu.utn.frbb.tup.model.Cuenta;
+import ar.edu.utn.frbb.tup.model.TipoMoneda;
 import ar.edu.utn.frbb.tup.model.TipoCuenta;
 import ar.edu.utn.frbb.tup.model.exception.CuentaAlreadyExistsException;
 import ar.edu.utn.frbb.tup.model.exception.TipoCuentaAlreadyExistsException;
@@ -31,7 +32,7 @@ public class CuentaService {
 
         //Chequear cuentas soportadas por el banco CA$ CC$ CAU$S
         
-        if (!tipoCuentaEstaSoportada(cuenta)) {
+        if (!isTipoCuentaSupported(cuenta)) {
             throw new TipoDeCuentaNoSoportadaException("El tipo de cuenta no está soportado por el banco.");
         }
 
@@ -43,17 +44,10 @@ public class CuentaService {
         return cuentaDao.find(id);
     }
 
-    private boolean tipoCuentaEstaSoportada(Cuenta cuenta) {
-            // Obtener el tipo de cuenta de la cuenta dada
-            TipoCuenta tipoCuenta = cuenta.getTipoCuenta();
-
-            // Verificar si el tipo de cuenta está soportado
-            switch (tipoCuenta) {
-                case CAJA_AHORRO:
-                case CUENTA_CORRIENTE:
-                    return true;
-                default:
-                    return false;
-            }
+    private boolean isTipoCuentaSupported (Cuenta cuenta) {
+        if (cuenta.getTipoCuenta().equals(TipoCuenta.CUENTA_CORRIENTE) && cuenta.getMoneda().equals(TipoMoneda.DOLARES)) {
+            return false;
         }
+        return true;
+    }
 }

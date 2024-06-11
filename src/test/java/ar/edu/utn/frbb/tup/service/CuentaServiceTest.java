@@ -66,12 +66,14 @@ public class CuentaServiceTest {
     }
 
     @Test
-    public void testCuentaNotSupported() throws TipoDeCuentaNoSoportadaException {
+    public void testCuentaNoSoportada(){
         Cuenta cuentaNoSoportada = new Cuenta();
-        cuentaNoSoportada.setTipoCuenta(TipoCuenta.TIPO_NO_SOPORTADO);
-        long dniTitular = 123;
+        cuentaNoSoportada.setTipoCuenta(TipoCuenta.CUENTA_CORRIENTE);   
+        cuentaNoSoportada.setMoneda(TipoMoneda.DOLARES);
 
-        assertThrows(TipoDeCuentaNoSoportadaException.class, () -> cuentaService.darDeAltaCuenta(cuentaNoSoportada,dniTitular));
+        when(cuentaDao.find(cuentaNoSoportada.getNumeroCuenta())).thenReturn(null);
+
+        assertThrows(TipoDeCuentaNoSoportadaException.class, () -> cuentaService.darDeAltaCuenta(cuentaNoSoportada, 123));
     }
 
     @Test
