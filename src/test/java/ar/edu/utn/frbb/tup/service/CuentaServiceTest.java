@@ -73,9 +73,9 @@ public class CuentaServiceTest {
     }
 
     @Test
-    public void testCuentaNoSoportada(){
+    public void testCuentaNoSoportada() {
         Cuenta cuentaNoSoportada = new Cuenta();
-        cuentaNoSoportada.setTipoCuenta(TipoCuenta.CUENTA_CORRIENTE);   
+        cuentaNoSoportada.setTipoCuenta(TipoCuenta.CUENTA_CORRIENTE);
         cuentaNoSoportada.setMoneda(TipoMoneda.DOLARES);
 
         when(cuentaDao.find(cuentaNoSoportada.getNumeroCuenta())).thenReturn(null);
@@ -83,28 +83,38 @@ public class CuentaServiceTest {
         assertThrows(TipoDeCuentaNoSoportadaException.class, () -> cuentaService.darDeAltaCuenta(cuentaNoSoportada, 123));
     }
 
-    @Test
-   public void testClienteAlreadyHasCuentaType() throws TipoCuentaAlreadyExistsException, CuentaAlreadyExistsException, TipoDeCuentaNoSoportadaException{
-        long dniTitular = 123;
+    @Test    //    3 - cliente ya tiene cuenta de ese tipo
+    public void testClienteAlreadyHasCuentaType() throws TipoCuentaAlreadyExistsException, CuentaAlreadyExistsException, TipoDeCuentaNoSoportadaException{
+        long dniTitular = 38944251;
+
+
         Cuenta cuenta = new Cuenta()
-            .setMoneda(TipoMoneda.PESOS)
-            .setBalance(500000)
-            .setTipoCuenta(TipoCuenta.CAJA_AHORRO);
-        cuenta.setNumeroCuenta(112312);
+                .setMoneda(TipoMoneda.PESOS)
+                .setTipoCuenta(TipoCuenta.CUENTA_CORRIENTE)
+                .setBalance(150000);
+        cuenta.setNumeroCuenta(12345);
 
-        when(cuentaDao.find(cuenta.getNumeroCuenta())).thenReturn(null);
-
-        clienteService.agregarCuenta(cuenta, dniTitular);
 
         Cuenta cuenta2 = new Cuenta()
                 .setMoneda(TipoMoneda.PESOS)
-                .setBalance(500000)
-                .setTipoCuenta(TipoCuenta.CAJA_AHORRO);
-        cuenta2.setNumeroCuenta(321);
+                .setTipoCuenta(TipoCuenta.CUENTA_CORRIENTE)
+                .setBalance(150000);
+        cuenta2.setNumeroCuenta(12346);
 
-        
-        assertThrows(TipoCuentaAlreadyExistsException.class, () -> clienteService.agregarCuenta(cuenta2, dniTitular));
 
+        when(cuentaDao.find(cuenta.getNumeroCuenta())).thenReturn(null);
+        when(cuentaDao.find(cuenta2.getNumeroCuenta())).thenReturn(null);
+
+        cuentaService.darDeAltaCuenta(cuenta, dniTitular);
+
+
+        doThrow(new TipoCuentaAlreadyExistsException("El cliente ya tiene una cuenta de este tipo."))
+                .when(clienteService).agregarCuenta(any(Cuenta.class), eq(dniTitular));
+
+        // Verificar que se lanza la excepción correcta al intentar agregar una cuenta del mismo tipo
+        assertThrows(TipoCuentaAlreadyExistsException.class, () -> cuentaService.darDeAltaCuenta(cuenta2, dniTitular));
+
+        // Verificar que el método save del DAO no se haya llamado para la segunda cuenta
         verify(cuentaDao, never()).save(cuenta2);
-   }
+    }
 }

@@ -210,7 +210,7 @@ public class ClienteServiceTest {
            verify(clienteDao, times(1)).find(46339672, true);
        }
 
-       //Testear clienteService.buscarPorDni
+   //Testear clienteService.buscarPorDni
     @Test
     public void testClienteServiceBuscarPorDniFallo() throws ClienteAlreadyExistsException{
         assertThrows(IllegalArgumentException.class, () -> clienteService.buscarClientePorDni(46339672));
