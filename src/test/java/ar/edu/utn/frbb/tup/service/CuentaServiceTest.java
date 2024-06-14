@@ -85,7 +85,7 @@ public class CuentaServiceTest {
 
     @Test    //    3 - cliente ya tiene cuenta de ese tipo
     public void testClienteAlreadyHasCuentaType() throws TipoCuentaAlreadyExistsException, CuentaAlreadyExistsException, TipoDeCuentaNoSoportadaException{
-        long dniTitular = 38944251;
+        long dniTitular = 46339672;
 
 
         Cuenta cuenta = new Cuenta()
