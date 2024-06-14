@@ -1,6 +1,7 @@
 package ar.edu.utn.frbb.tup.service;
 
 import ar.edu.utn.frbb.tup.model.*;
+import ar.edu.utn.frbb.tup.model.exception.ClienteAlreadyExistsException;
 import ar.edu.utn.frbb.tup.model.exception.CuentaAlreadyExistsException;
 import ar.edu.utn.frbb.tup.model.exception.TipoCuentaAlreadyExistsException;
 import ar.edu.utn.frbb.tup.model.exception.TipoDeCuentaNoSoportadaException;
@@ -40,16 +41,22 @@ public class CuentaServiceTest {
     }
 
     @Test
-    public void testCuentaSucess() throws CuentaAlreadyExistsException, TipoCuentaAlreadyExistsException, TipoDeCuentaNoSoportadaException{
-        Cuenta cuenta = new Cuenta();
-        cuenta.setNumeroCuenta(123654);
-        long dniTitular = 48357988;
+    public void testCuentaSucess() throws CuentaAlreadyExistsException, TipoCuentaAlreadyExistsException, TipoDeCuentaNoSoportadaException, ClienteAlreadyExistsException {
+        Cliente cliente = new Cliente();
+        cliente.setDni(46339672);
 
-        when(cuentaDao.find(cuenta.getNumeroCuenta())).thenReturn(null); 
+        clienteService.darDeAltaCliente(cliente);
 
-        cuentaService.darDeAltaCuenta(cuenta, dniTitular);
+        Cuenta cuenta = new Cuenta()
+                .setMoneda(TipoMoneda.PESOS)
+                .setTipoCuenta(TipoCuenta.CUENTA_CORRIENTE)
+                .setBalance(150000);
+        cuenta.setNumeroCuenta(2203);
+
+        cuentaService.darDeAltaCuenta(cuenta, cliente.getDni());
 
         verify(cuentaDao, times(1)).save(cuenta);
+
     }
 
     @Test

@@ -209,12 +209,10 @@ public class ClienteServiceTest {
    
            verify(clienteDao, times(1)).find(46339672, true);
        }
-   
+
        //Testear clienteService.buscarPorDni
     @Test
     public void testClienteServiceBuscarPorDniFallo() throws ClienteAlreadyExistsException{
-           Cliente resultadoBuscarDNI = clienteService.buscarClientePorDni(34554354);
-           assertNull(resultadoBuscarDNI); //Verifica que el resultado de la búsqueda sea null osea que no se encontró ningún cliente con el DNI especificado.
-           verify(clienteDao, times(1)).find(34554354, true);
+        assertThrows(IllegalArgumentException.class, () -> clienteService.buscarClientePorDni(46339672));
     }
 }
